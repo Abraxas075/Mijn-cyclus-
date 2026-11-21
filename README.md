@@ -25,6 +25,10 @@ Open `index.html` in een browser. Er is geen installatie of server nodig.
 
 Open de app in Chrome of Brave, tik op de drie puntjes (⋮) en kies **Toevoegen aan startscherm** of **App installeren**. De app krijgt dan een eigen icoon (een zon), opent zonder adresbalk en werkt ook zonder internet.
 
+## Telefoon-app bouwen met Rork
+
+In [`RORK.md`](RORK.md) staat een complete bouwopdracht om deze app met Rork als echte iOS- en Android-app te laten bouwen: alle schermen, berekeningen, teksten, kleuren en de afbeeldingen uit [`assets/images/`](assets/images/).
+
 ## Privacy
 
 Alles wat je invult (je instellingen en je dagboek) wordt alleen opgeslagen in de browser van het apparaat waarop je de app gebruikt (`localStorage`). Er wordt niets naar een server verstuurd. Op een ander apparaat of in een andere browser zie je je gegevens dus niet; gebruik **Kopieer als tekst** om een back-up te maken.
