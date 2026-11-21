@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mijn cyclus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, calm and tender: few hues, air, plain Dutch
+   IDEA a paper cycle dial: one ring of days you turn through the month
+   PICTURE the large ring with today's marker; the hormone chart in Verkennen
+   COLOUR white ground, deep plum band, five phase colours as the only accents
+   TYPE Outfit 500/600 for display + Figtree for text
+   LAYOUT laptop: ring left, status and settings right, phase card below; phone: ring, status, settings, card */
+:root{--bg:#fff;--surf:#f8f3f7;--ink:#2a1f2b;--mut:#6b5f6c;--line:#eadfe8;--plum:#4a2340;--band:#4a2340;--onc:#fff;
+--men:#a63d5a;--men-t:#f8e1e7;--fol:#2f7f6a;--fol-t:#dff0e9;--eis:#a86e10;--eis-t:#fbedd0;--lut:#5e4c9a;--lut-t:#e8e3f5;--pre:#7e3f72;--pre-t:#f1e0ee;
+--e2:#b23a6b;--p4:#3e6fb0;--lh:#b07612;--fsh:#16907a;--warn:#9e2f45;--warn-t:#fbedef;color-scheme:light}
+:root[data-theme=dark]{--bg:#16101a;--surf:#211925;--ink:#f1e9f0;--mut:#b8aab8;--line:#3a2f3d;--plum:#e7b6d8;--band:#2a1630;--onc:#1a1018;
+--men:#e07892;--men-t:#3a1f29;--fol:#5dbb9f;--fol-t:#173029;--eis:#e0a645;--eis-t:#33270f;--lut:#a593e0;--lut-t:#262040;--pre:#cf86bf;--pre-t:#33192f;
+--e2:#d9588c;--p4:#5e8fdb;--lh:#b8852a;--fsh:#26a286;--warn:#f08a9c;--warn-t:#3a1c22;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#16101a;--surf:#211925;--ink:#f1e9f0;--mut:#b8aab8;--line:#3a2f3d;--plum:#e7b6d8;--band:#2a1630;--onc:#1a1018;
+--men:#e07892;--men-t:#3a1f29;--fol:#5dbb9f;--fol-t:#173029;--eis:#e0a645;--eis-t:#33270f;--lut:#a593e0;--lut-t:#262040;--pre:#cf86bf;--pre-t:#33192f;
+--e2:#d9588c;--p4:#5e8fdb;--lh:#b8852a;--fsh:#26a286;--warn:#f08a9c;--warn-t:#3a1c22;color-scheme:dark}}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Outfit,Figtree,sans-serif;font-weight:600;letter-spacing:-.02em;line-height:1.1;text-wrap:balance;margin:0}
+h2{font-size:clamp(26px,4vw,34px);color:var(--plum);margin:0 0 10px}
+h3{font-size:21px}
+h4{margin:0 0 4px;font-size:15px}
+p{margin:0 0 10px}
+a{color:var(--plum)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 max(16px,4vw)}
+header.top{background:var(--band);color:#fff}
+header.top .wrap{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:22px;padding-bottom:10px}
+header.top h1{font-size:clamp(32px,5vw,44px)}
+header.top p{margin:4px 0 0;color:#ead7e6;font-size:15px}
+nav.tabs{position:sticky;top:0;z-index:5;background:var(--band);border-bottom:1px solid #ffffff22}
+nav.tabs .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:6px;padding-bottom:10px}
+nav.tabs a{flex:none;color:#f3e6f0;text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:600;min-height:44px;display:flex;align-items:center}
+nav.tabs a[aria-current=page]{background:#fff;color:#4a2340}
+nav.tabs a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-within{outline:3px solid var(--eis);outline-offset:2px}
+main{padding:24px 0 60px}
+.view[hidden]{display:none}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:18px}
+.muted{color:var(--mut)}
+.small{font-size:14px}
+.today{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:860px){.today{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}}
+.ringbox{display:flex;flex-direction:column;align-items:center;gap:12px}
+#ring{width:100%;max-width:440px;height:auto;display:block}
+#ring text{font-family:Outfit,sans-serif}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.legend i{width:11px;height:11px;border-radius:50%;background:var(--c)}
+.side{display:grid;gap:14px}
+.up{list-style:none;margin:0;padding:0}
+.up li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line)}
+.up li:last-child{border:0}
+.up i{width:10px;height:10px;border-radius:50%;background:var(--c);align-self:center}
+.up b{font-weight:600}
+.up em{font-style:normal;color:var(--mut);white-space:nowrap;font-size:14px}
+.note{font-size:14px;color:var(--mut);margin:10px 0 0}
+.alert{background:var(--warn-t);border-left:4px solid var(--warn);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.set{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.set label{display:grid;gap:4px;font-size:14px;color:var(--mut)}
+input[type=date],textarea{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;font-size:16px;min-height:44px;width:100%}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--bg);width:max-content}
+.step button{width:44px;height:44px;border:0;background:none;font-size:20px;cursor:pointer;color:var(--plum)}
+.step output{min-width:5.5em;text-align:center;font-weight:600;color:var(--ink);white-space:nowrap}
+.btn{border:0;border-radius:999px;padding:10px 18px;min-height:44px;font-weight:600;cursor:pointer;background:var(--plum);color:var(--bg)}
+.btn.ghost{background:none;color:var(--plum);border:1px solid var(--line)}
+.btn:active{transform:translateY(1px)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pcard{border-radius:20px;overflow:hidden;border:1px solid var(--line);margin-top:20px;background:var(--bg)}
+.pcard>header{background:var(--c);color:var(--onc);padding:16px 18px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.pcard>header p{margin:2px 0 0;opacity:.9;font-size:15px}
+.badge{background:var(--onc);color:var(--c);border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px;white-space:nowrap}
+.pbody{padding:18px;display:grid;gap:16px}
+.kort{font-size:17px;margin:0}
+.pgrid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:620px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1000px){.pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pgrid h4{color:var(--c)}
+.pgrid p{margin:0;font-size:15.5px}
+.tip{background:var(--t);border-radius:14px;padding:12px 14px;font-size:15.5px}
+.tip b{color:var(--c)}
+.meter{display:grid;gap:6px}
+.meter .mr{display:grid;grid-template-columns:8.5em minmax(0,1fr) minmax(0,9.5em);gap:10px;align-items:center;font-size:14.5px}
+.track{height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.track span{display:block;height:100%;border-radius:6px;background:var(--c)}
+.meter .mr em{font-style:normal;color:var(--mut)}
+.asp{display:grid}
+.ag{margin:16px 0 2px;font-weight:700;font-size:14.5px;color:var(--c)}
+.ar{display:grid;grid-template-columns:minmax(0,11em) minmax(0,15em) minmax(0,1fr);gap:6px 18px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.ah b{display:block;font-weight:600}
+.ah span{color:var(--c);font-weight:600;font-size:14.5px}
+.spark{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.spark div{display:grid;gap:3px;justify-items:center}
+.spark i{display:block;width:100%;height:30px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
+.spark i b{position:absolute;left:0;right:0;bottom:0;background:var(--pc);opacity:.5;border-radius:6px 6px 0 0}
+.spark .on i{outline:2px solid var(--ink);outline-offset:1px}
+.spark .on i b{opacity:1}
+.spark small{font-size:13px;color:var(--mut);line-height:1.2}
+.spark .on small{color:var(--ink);font-weight:700}
+.ax{margin:0;font-size:14.5px;color:var(--mut)}
+.ar.info .ax{grid-column:2/-1}
+@media(max-width:760px){.ar{grid-template-columns:minmax(0,1fr) minmax(0,15em)}.ar .ax,.ar.info .ax{grid-column:1/-1}}
+@media(max-width:520px){.ar{grid-template-columns:minmax(0,1fr)}.ah{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.ah b{display:inline}.ah span{text-align:right}}
+.ctrl{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center}
+.dayno{font-family:Outfit,sans-serif;font-size:40px;line-height:1;color:var(--plum);white-space:nowrap}
+.dayno small{font-size:15px;color:var(--mut);font-family:Figtree,sans-serif}
+.ibtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-size:18px;color:var(--plum)}
+input[type=range]{width:100%;height:44px;accent-color:var(--plum);background:none}
+.fig{position:relative;height:clamp(240px,40vw,340px);margin-top:8px;touch-action:pan-y}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.keys{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;margin-top:10px}
+.keys span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.keys i{width:18px;height:3px;border-radius:2px;background:var(--c)}
+.keys i.d{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 8px)}
+.read{display:grid;gap:6px;margin-top:12px}
+.read .mr{display:grid;grid-template-columns:7.5em minmax(0,1fr) 5.5em;gap:10px;align-items:center;font-size:14.5px}
+.weeks{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));margin-top:10px}
+.weeks div{background:var(--t);border-radius:16px;padding:14px 16px}
+.weeks h4{color:var(--c);font-family:Outfit,sans-serif;font-size:17px}
+.weeks p{margin:0;font-size:15px}
+.sec{margin-top:36px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:10px;border-bottom:1px solid var(--line)}
+thead th{font-size:14px;color:var(--mut)}
+td.ph{font-weight:700;color:var(--c);white-space:nowrap}
+.log{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.log{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:start}}
+fieldset{border:0;margin:0 0 12px;padding:0}
+legend{font-weight:600;padding:0;margin-bottom:6px;display:flex;justify-content:space-between;width:100%;gap:8px}
+legend em{font-weight:400;font-style:normal;color:var(--mut);font-size:13px}
+.seg{display:flex;gap:6px}
+.seg label{flex:1;position:relative}
+.seg input{position:absolute;opacity:0;inset:0}
+.seg span{display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer;font-weight:600}
+.seg input:checked+span{background:var(--plum);color:var(--bg);border-color:var(--plum)}
+.cd{font-size:14px;margin:6px 0 14px}
+.entries{list-style:none;margin:0;padding:0;max-height:560px;overflow:auto}
+.entries li{display:grid;grid-template-columns:6px minmax(0,1fr) auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.entries li>i{background:var(--c);border-radius:3px}
+.entries .vals{font-size:14px;color:var(--mut)}
+.entries .acts{display:flex;gap:4px;align-items:start}
+.entries .acts button{min-height:44px;min-width:44px;border:0;background:none;color:var(--plum);cursor:pointer;font-weight:600}
+.tag{font-size:12.5px;background:var(--line);border-radius:999px;padding:2px 8px;margin-left:6px;color:var(--mut)}
+.subnav{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
+.subnav button{flex:none;border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer;font-weight:600;color:var(--plum)}
+.know{max-width:760px}
+.know section{padding-top:28px}
+.know h3{color:var(--plum);margin:18px 0 8px;font-size:20px}
+.know ul{padding-left:20px;margin:0 0 12px}
+.know li{margin-bottom:6px}
+.box{background:var(--surf);border-left:4px solid var(--plum);border-radius:12px;padding:14px 16px;margin:12px 0}
+.box.w{background:var(--warn-t);border-color:var(--warn)}
+.box.w b:first-child{color:var(--warn)}
+.bars{display:grid;gap:10px;margin:12px 0}
+.bars .mr{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 4.5em;gap:10px;align-items:center;font-size:14.5px}
+.bars .mr b{text-align:right;white-space:nowrap}
+.stats{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));margin:12px 0}
+.stats div{background:var(--surf);border-radius:14px;padding:12px 14px}
+.stats strong{display:block;font-family:Outfit,sans-serif;font-size:clamp(28px,6vw,36px);color:var(--c);line-height:1.1}
+.stats span{font-size:14px}
+.check{list-style:none;padding:0!important}
+.check li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.check li::before{content:"";width:16px;height:16px;border:2px solid var(--plum);border-radius:4px;margin-top:4px}
+.src li{font-size:14.5px;overflow-wrap:anywhere}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;display:flex;gap:12px;align-items:center;z-index:20;max-width:calc(100% - 32px)}
+#toast[hidden]{display:none}
+#toast button{background:none;border:0;color:var(--bg);font-weight:700;text-decoration:underline;cursor:pointer;min-height:36px}
+footer{border-top:1px solid var(--line);padding:18px 0 30px;font-size:14px;color:var(--mut)}
+@media(max-width:600px){
+nav.tabs a{padding:10px 12px}
+.meter .mr{grid-template-columns:7em minmax(0,1fr);row-gap:2px}.meter .mr em{grid-column:2;font-size:13.5px}
+.ctrl{grid-template-columns:auto minmax(0,1fr)}.ctrl .ibtn{display:none}
+.bars .mr{grid-template-columns:minmax(0,1fr) 4.5em}.bars .mr .track{grid-column:1/-1;grid-row:2}
+.stack thead{display:none}.stack tr{display:grid;padding:10px 0;border-bottom:1px solid var(--line)}.stack td{border:0;padding:3px 0}.stack td::before{content:attr(data-l);display:block;font-size:13px;color:var(--mut)}
+}
+@media(prefers-reduced-motion:no-preference){#mark{transition:transform .5s ease}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><div><h1>Mijn cyclus</h1><p>Hoe je lichaam, stemming en zelfbeeld door de maand heen kunnen veranderen</p></div></div></header>
+<nav class="tabs" aria-label="Onderdelen"><div class="wrap">
+<a href="#vandaag" data-v="vandaag">Vandaag</a><a href="#verkennen" data-v="verkennen">Verkennen</a><a href="#dagboek" data-v="dagboek">Dagboek</a><a href="#weten" data-v="weten">Weten</a>
+</div></nav>
+<main class="wrap">
+
+<section class="view" id="v-vandaag">
+<div class="today">
+<div class="ringbox"><svg id="ring" viewBox="0 0 300 300" role="img" aria-label="Cyclusring met de dag van vandaag"></svg><div class="legend" id="ringLeg"></div></div>
+<div class="side">
+<div class="panel"><h3 style="margin-bottom:8px">Wat komt eraan</h3><div id="status"></div><p class="note">Een schatting op basis van je instellingen. Niet geschikt als anticonceptie of om de vruchtbare dagen precies te bepalen.</p></div>
+<div class="panel">
+<h3 style="margin-bottom:12px">Jouw cyclus</h3>
+<div class="set">
+<label>Eerste dag laatste menstruatie<input type="date" id="start"></label>
+<div><div class="muted small" style="margin-bottom:4px">Cycluslengte</div><div class="step"><button type="button" id="lMin" aria-label="Korter">−</button><output id="lOut"></output><button type="button" id="lPlus" aria-label="Langer">+</button></div></div>
+<div><div class="muted small" style="margin-bottom:4px">Menstruatie duurt</div><div class="step"><button type="button" id="dMin" aria-label="Korter">−</button><output id="dOut"></output><button type="button" id="dPlus" aria-label="Langer">+</button></div></div>
+</div>
+<div class="row" style="margin-top:14px"><button class="btn" type="button" id="nowStart">Mijn menstruatie is vandaag begonnen</button></div>
+<p class="note" id="sampleNote">De datum hierboven is een voorbeeld. Vul je eigen datum in; die wordt op dit apparaat onthouden.</p>
+</div>
+</div>
+</div>
+<div id="todayCard"></div>
+</section>
+
+<section class="view" id="v-verkennen" hidden>
+<h2>Door de cyclus heen</h2>
+<p class="muted">Schuif door de dagen of tik in de grafiek. De lijnen tonen het verloop van de hormonen schematisch, geen echte meetwaarden.</p>
+<div class="panel">
+<div class="ctrl"><div class="dayno" id="exDay"></div><input type="range" id="exRange" min="1" max="28" value="1" aria-label="Dag van de cyclus"><button class="ibtn" type="button" id="exPrev" aria-label="Vorige dag">‹</button><button class="ibtn" type="button" id="exNext" aria-label="Volgende dag">›</button></div>
+<div class="keys"><span style="--c:var(--e2)"><i></i>Oestrogeen</span><span style="--c:var(--p4)"><i></i>Progesteron</span><span style="--c:var(--lh)"><i></i>LH</span><span style="--c:var(--fsh)"><i class="d"></i>FSH</span></div>
+<div class="fig" id="hfig"><svg id="hsvg" aria-label="Hormonen tijdens de cyclus"></svg></div>
+<div class="read" id="hread"></div>
+</div>
+<div id="exCard"></div>
+<div class="sec"><h2>Een maand in vier weken</h2><p class="muted">Een veelvoorkomend patroon bij een cyclus van ongeveer 28 dagen; geen beschrijving van hoe het bij iedereen gaat.</p><div class="weeks" id="weeks"></div></div>
+<div class="sec"><h2>Alle fasen naast elkaar</h2><div class="scroll"><table class="stack" id="ovTable"></table></div></div>
+</section>
+
+<section class="view" id="v-dagboek" hidden>
+<h2>Dagboek</h2>
+<p class="muted">Houd twee à drie cycli elke dag bij hoe het gaat. Zo zie je je eigen patroon, en heeft je huisarts precies de informatie die nodig is.</p>
+<div class="log">
+<form class="panel" id="logForm">
+<label class="muted small">Datum<input type="date" id="lDate"></label>
+<p class="cd" id="lCd"></p>
+<div id="groups"></div>
+<label class="muted small">Notities (klachten, gebeurtenissen, medicijnen)<textarea id="lNote" rows="3"></textarea></label>
+<div class="row" style="margin-top:12px"><button class="btn" type="submit">Dag opslaan</button><button class="btn ghost" type="button" id="lReset">Leegmaken</button></div>
+</form>
+<div>
+<div class="panel"><h3 style="margin-bottom:4px">Jouw stemming en zelfbeeld per cyclusdag</h3><div class="keys"><span style="--c:var(--lut)"><i></i>Stemming</span><span style="--c:var(--men)"><i></i>Zelfbeeld</span><span class="muted">1 = heel slecht, 5 = heel goed</span></div><div class="fig" id="pfig" style="height:220px"><svg id="psvg" aria-label="Stemming en zelfbeeld per cyclusdag"></svg></div></div>
+<p class="note" id="exNote"></p>
+<ul class="entries" id="entries"></ul>
+<div class="panel" style="margin-top:14px">
+<p class="small" style="margin:0 0 10px">Je dagboek blijft alleen in deze browser op dit apparaat. Kopieer het af en toe als back-up of om mee te nemen naar de huisarts.</p>
+<div class="row"><button class="btn ghost" type="button" id="copyLog">Kopieer als tekst</button><button class="btn ghost" type="button" id="wipe">Alles wissen</button></div>
+<textarea id="copyBox" rows="5" readonly hidden style="margin-top:10px"></textarea>
+</div>
+</div>
+</div>
+</section>
+
+<section class="view" id="v-weten" hidden>
+<h2>Goed om te weten</h2>
+<div class="subnav" id="subnav"><button type="button" data-go="w-mooi">Mooi of minder mooi</button><button type="button" data-go="w-stem">Vrolijk of somber</button><button type="button" data-go="w-pms">PMS en PMDD</button><button type="button" data-go="w-nuance">Nuances</button><button type="button" data-go="w-tips">Tips</button><button type="button" data-go="w-arts">Naar de huisarts</button><button type="button" data-go="w-bron">Bronnen</button></div>
+<div class="know">
+<section id="w-mooi">
+<h2>Je mooi of minder mooi voelen</h2>
+<p>Het gevoel er goed of juist slecht uit te zien schommelt bij veel vrouwen mee met de cyclus. Het gaat om hoe je je <i>voelt</i>, niet om hoe je er <i>uitziet</i>: je lichaam verandert in een maand nauwelijks, je beleving ervan wel.</p>
+<h3>Rond de eisprong: je aantrekkelijker voelen</h3>
+<p>In de grootste studie tot nu toe hielden 872 vrouwen (580 zonder hormonale anticonceptie) 70 dagen een dagboek bij. Vrouwen met een natuurlijke cyclus voelden zich vóór en rond de eisprong duidelijk aantrekkelijker en begeerlijker.</p>
+<ul><li>Sterkste effect: je seksueel begeerlijk voelen, daarna je aantrekkelijk voelen.</li><li>Zelfvertrouwen en positieve stemming stegen ook, maar minder.</li><li>Hoeveel moeite vrouwen voor hun uiterlijk deden, veranderde niet duidelijk.</li><li>Bij gebruiksters van de pil of een ander hormonaal middel bleef de stijging uit.</li></ul>
+<p>In een kledingonderzoek met 30 vrouwen kozen beoordelaars in 59,5% van de gevallen de foto uit de vruchtbare fase als die waarop de vrouw ‘meer haar best deed’. Meer dan toeval (50%), maar subtiel, en de groep was klein.</p>
+<div class="box"><b>Wat níét overeind bleef.</b> Claims dat vrouwen rond de eisprong bijvoorbeeld ‘mannelijkere’ mannen verkiezen, hielden in grote herhalingsstudies grotendeels geen stand. Meer zin in seks en je aantrekkelijker voelen zijn veel beter onderbouwd.</div>
+<h3>Rond de menstruatie: je minder mooi voelen</h3>
+<p>Vóór en tijdens de menstruatie is de ontevredenheid over het lichaam het grootst. Oorzaken die elkaar versterken:</p>
+<ul><li><b>Vocht vasthouden en een opgeblazen buik</b>: kleding zit strakker.</li><li><b>Huid</b>: 44% van 400 vrouwen meldde een acne-opvlamming vóór de menstruatie.</li><li><b>Stemming en moeheid</b>: wie zich somber voelt, kijkt kritischer naar zichzelf.</li><li><b>Minder zin in sporten en meer trek</b>, wat bij sommigen schaamte geeft.</li></ul>
+<p>Belangrijk: in onderzoek veranderde de <b>waargenomen lichaamsomvang niet</b>. Het gevoel is echt, maar tijdelijk, en zegt weinig over hoe je er werkelijk uitziet. Neem op die dagen geen grote beslissingen over je uiterlijk of eetpatroon. Ben je gevoelig voor eetproblemen, let dan juist dan extra op compenseren (maaltijden overslaan, overmatig sporten) en bespreek het met je huisarts of behandelaar.</p>
+</section>
+
+<section id="w-stem">
+<h2>Vrolijk of somber</h2>
+<p>Het populaire beeld is dat ‘alle vrouwen’ vóór de menstruatie slechter gehumeurd zijn. Een review uit 2012 bekeek 47 studies waarin vrouwen hun stemming dagelijks bijhielden:</p>
+<div class="bars" style="--c:var(--lut)">
+<div class="mr"><span>Geen verband tussen stemming en cyclusfase</span><div class="track"><span style="width:100%"></span></div><b>38,3%</b></div>
+<div class="mr"><span>Somberder premenstrueel én in een andere fase (vaak de menstruatie)</span><div class="track"><span style="width:100%"></span></div><b>38,3%</b></div>
+<div class="mr"><span>Somberder alléén premenstrueel</span><div class="track"><span style="width:38.9%"></span></div><b>14,9%</b></div>
+<div class="mr"><span>Somberder alleen in een andere fase</span><div class="track"><span style="width:22.2%"></span></div><b>8,5%</b></div>
+</div>
+<p>De onderzoekers vonden geen duidelijk bewijs voor een premenstrueel ‘slecht humeur’ dat voor alle vrouwen geldt. Als deelnemers wisten dat het onderzoek over de cyclus ging, werd vaker een premenstrueel patroon gevonden. Nieuwere dagboekstudies zien wel vaker iets meer negatieve stemming vóór en tijdens de menstruatie, en iets meer positieve stemming halverwege. Samengevat: <b>gemiddeld een kleine schommeling, met grote verschillen tussen vrouwen.</b></p>
+<h3>De kracht van verwachtingen</h3>
+<p>In een experiment uit 1977 zaten alle vrouwen midden in hun cyclus. Wie te horen kreeg dat ze premenstrueel was, meldde toch meer klachten. Vrouwen schrijven een slechte bui in de premenstruele week ook vaker aan hun cyclus toe, en een goede bui aan hun omstandigheden. Dat maakt klachten niet minder echt, maar een dagboek helpt om te zien wat er werkelijk speelt.</p>
+<h3>Wie is extra gevoelig?</h3>
+<ul><li>Vrouwen met PMS of PMDD.</li><li>Vrouwen met een bestaande depressie of angststoornis, bij wie klachten vóór de menstruatie vaak verergeren.</li><li>Vrouwen in de perimenopauze, als de hormonen grilliger gaan schommelen.</li></ul>
+</section>
+
+<section id="w-pms">
+<h2>PMS, PMDD en premenstruele verergering</h2>
+<div class="scroll"><table class="stack">
+<thead><tr><th></th><th>Normale schommeling</th><th>PMS</th><th>PMDD</th><th>Verergering (PME)</th></tr></thead>
+<tbody>
+<tr><td><b>Wat is het?</b></td><td data-l="Normale schommeling">Lichte veranderingen in stemming, energie en lichaam</td><td data-l="PMS">Lichamelijke en/of psychische klachten die elke cyclus terugkomen</td><td data-l="PMDD">Ernstige, vooral psychische vorm; erkende diagnose (DSM-5, ICD-11)</td><td data-l="Verergering (PME)">Een bestaande aandoening, zoals depressie, wordt vóór de menstruatie erger</td></tr>
+<tr><td><b>Wanneer?</b></td><td data-l="Normale schommeling">Rond de menstruatie en de dagen ervoor</td><td data-l="PMS">Na de eisprong; weg kort na het begin van de menstruatie, daarna minstens een week klachtenvrij</td><td data-l="PMDD">Laatste week vóór de menstruatie, in de meeste cycli</td><td data-l="Verergering (PME)">Klachten zijn er óók buiten de premenstruele fase</td></tr>
+<tr><td><b>Hoe ernstig?</b></td><td data-l="Normale schommeling">Hinderlijk, maar het leven gaat door</td><td data-l="PMS">Zo erg dat je gewone dagelijkse dingen niet lukken</td><td data-l="PMDD">Duidelijke lijdensdruk, hinder in werk en relaties</td><td data-l="Verergering (PME)">Hangt af van de onderliggende aandoening</td></tr>
+<tr><td><b>Hoe vaak?</b></td><td data-l="Normale schommeling">Heel veel vrouwen</td><td data-l="PMS">Ongeveer 5 op de 100 vrouwen van 15–45 jaar</td><td data-l="PMDD">Ongeveer 1,6 tot 3,2 op de 100</td><td data-l="Verergering (PME)">58% van vrouwen met een actuele depressie (één onderzoek)</td></tr>
+<tr><td><b>Wat helpt?</b></td><td data-l="Normale schommeling">Leefstijl, rust inplannen, dagboek</td><td data-l="PMS">Leefstijl, cognitieve gedragstherapie, pil, SSRI</td><td data-l="PMDD">SSRI, pil; bij ernstige klachten soms GnRH-analogen</td><td data-l="Verergering (PME)">Behandeling van de aandoening, met aandacht voor de cyclus</td></tr>
+</tbody></table></div>
+<h3>PMS</h3>
+<p>Volgens Thuisarts spreek je van PMS als de klachten zo erg zijn dat je je gewone dagelijkse dingen niet kunt doen. Milde klachten hebben veel vrouwen; echte PMS veel minder. Wereldwijde schattingen lopen uiteen van 12% tot 98% door verschillende definities. Er is geen bloedtest: de diagnose wordt gesteld met een klachtendagboek.</p>
+<h3>PMDD</h3>
+<ul><li>Minstens vijf symptomen in de laatste week vóór de menstruatie, in de meeste cycli van het afgelopen jaar.</li><li>Minstens één kernsymptoom: duidelijke stemmingswisselingen, prikkelbaarheid of boosheid, somberheid of hopeloosheid, of angst en gespannenheid.</li><li>Verder bijvoorbeeld minder interesse, concentratieproblemen, moeheid, eetbuien, slaapproblemen, overweldigd voelen, lichamelijke klachten.</li><li>Duidelijke hinder in werk en relaties, bevestigd door twee cycli dagelijks bijhouden.</li></ul>
+<p>Hoe vaak, volgens een meta-analyse van 44 studies (2024):</p>
+<div class="stats">
+<div style="--c:var(--lut)"><strong>1,6%</strong><span>algemene bevolking, strikte criteria</span></div>
+<div style="--c:var(--pre)"><strong>3,2%</strong><span>bevestigde diagnose met dagboek</span></div>
+<div style="--c:var(--men)"><strong>7,7%</strong><span>voorlopige diagnose zonder dagboek</span></div>
+</div>
+<div class="box w"><b>PMDD is ernstig.</b> In een onderzoek onder 110 vrouwen met PMDD had 39% op dat moment gedachten aan zelfdoding. Herken je dit? Praat met je huisarts, of neem contact op met 113 Zelfmoordpreventie: <b>0800-0113</b> (gratis) of <a href="https://www.113.nl">113.nl</a>.</div>
+<h3>Premenstruele verergering (PME)</h3>
+<p>Hier verergert een bestaande aandoening vóór de menstruatie: duidelijk aangetoond bij depressie, paniekstoornis, eetstoornissen, psychotische stoornissen en borderline. Het verschil met PMS en PMDD: er zijn ook buiten de premenstruele dagen klachten. Psychische klachten op bijna elke dag van de maand wijzen niet op PMS; ga dan naar de huisarts.</p>
+<h3>Behandeling</h3>
+<ul><li><b>SSRI’s</b> verminderen de klachten waarschijnlijk beter dan een placebo, dagelijks of alleen in de tweede helft van de cyclus (Cochrane, 2024). Ze nemen ze meestal niet helemaal weg.</li><li><b>De pil</b>, eventueel doorgeslikt, vlakt de schommelingen af. Helpt niet bij iedereen; evalueer na drie maanden.</li><li><b>Cognitieve gedragstherapie</b> helpt om beter met de klachten om te gaan.</li><li>Bij ernstige klachten soms <b>GnRH-analogen</b> via de gynaecoloog.</li></ul>
+</section>
+
+<section id="w-nuance">
+<h2>Belangrijke nuances</h2>
+<h3>De verschillen tussen vrouwen zijn groter dan het gemiddelde</h3>
+<p>Slechts 13% van ruim 600.000 cycli duurde precies 28 dagen; gemiddeld was dat 29,3 dagen. Het verschil zit vooral in het moment van de eisprong; de periode daarna is vrij constant (12 à 14 dagen). Sommige vrouwen merken vrijwel niets van hun cyclus, anderen voelen elke fase.</p>
+<h3>Hormonale anticonceptie verandert het patroon</h3>
+<p>Combinatiepillen onderdrukken de eisprong en houden de hormonen vlak; de pieken verdwijnen grotendeels. Bloedverlies in de stopweek is geen echte menstruatie. Bij de meeste vrouwen heeft de pil geen negatief effect op de stemming. In een Deens onderzoek onder ruim een miljoen vrouwen hing hormonale anticonceptie samen met iets vaker een eerste antidepressivum (2,2 tegenover 1,7 per 100 vrouwen per jaar), vooral bij tieners. Dat bewijst geen oorzaak. Merk je dat je stemming achteruitgaat, bespreek het met je huisarts.</p>
+<h3>Perimenopauze</h3>
+<p>Vanaf ongeveer 40 jaar schommelen de hormonen grilliger. De kans op depressieve klachten is dan ongeveer 1,5 tot 2 keer zo groot als ervoor, vooral bij vrouwen die eerder PMDD of stemmingsklachten hadden.</p>
+<h3>Wees kritisch op apps en sociale media</h3>
+<p>Veel onderzoek is klein. De beste studies bevestigen kleine effecten op zin in seks en je aantrekkelijk voelen; spectaculairdere claims zijn grotendeels niet herhaald. Geen app weet hoe jij je ‘zou moeten’ voelen, ook deze niet.</p>
+</section>
+
+<section id="w-tips">
+<h2>Omgaan met de mindere dagen</h2>
+<ul>
+<li><b>Houd je cyclus bij</b>, minstens twee à drie cycli. Dit is de belangrijkste stap.</li>
+<li><b>Plan rond je patroon</b>: belangrijke afspraken in je betere dagen, rust vóór en aan het begin van de menstruatie. Leg je omgeving uit wat er speelt.</li>
+<li><b>Beweeg regelmatig</b>: minstens acht weken trainen verminderde in onderzoek de PMS-klachten duidelijk, en helpt ook tegen menstruatiepijn en slecht slapen.</li>
+<li><b>Slaap</b>: vaste tijden, en een koele slaapkamer in de tweede helft van de cyclus.</li>
+<li><b>Eet regelmatig en gevarieerd</b>. Minder zout, cafeïne en alcohol kan helpen. Calcium is het best onderzochte supplement; bespreek het eerst met je huisarts.</li>
+<li><b>Pijn</b>: neem een ontstekingsremmende pijnstiller (zoals ibuprofen) vroeg, bij de eerste pijn. Warmte helpt ook.</li>
+<li><b>Psychologische hulp</b>: cognitieve gedragstherapie wordt in Nederlandse richtlijnen genoemd.</li>
+</ul>
+</section>
+
+<section id="w-arts">
+<h2>Wanneer naar de huisarts?</h2>
+<ul class="check">
+<li>Klachten verstoren elke maand je werk, studie, relaties of dagelijks leven.</li>
+<li>Je bent (bijna) de hele maand somber, angstig of prikkelbaar.</li>
+<li>Ernstige menstruatiepijn die niet reageert op pijnstillers of steeds erger wordt (denk ook aan endometriose).</li>
+<li>Zeer hevig bloedverlies, bloedingen tussendoor, of een sterk onregelmatige of uitblijvende menstruatie (doe bij uitblijven eerst een zwangerschapstest).</li>
+<li>Je stemming verandert duidelijk na het starten van een anticonceptiemiddel.</li>
+<li>Je bent 40 tot 50 en krijgt nieuwe of heftigere stemmingsklachten.</li>
+<li>Je slikt de pil tegen PMS en merkt na drie maanden geen verbetering.</li>
+</ul>
+<div class="box w"><b>Denk je aan zelfdoding?</b> Zoek direct hulp: bel je huisarts of de huisartsenpost, of 113 Zelfmoordpreventie: <b>0800-0113</b> (gratis, dag en nacht) of chat via <a href="https://www.113.nl">113.nl</a>. Bij direct gevaar: <b>112</b>.</div>
+</section>
+
+<section id="w-bron">
+<h2>Bronnen</h2>
+<ol class="src">
+<li>Thuisarts: <a href="https://www.thuisarts.nl/premenstrueel-syndroom/ik-heb-premenstrueel-syndroom">Premenstrueel syndroom</a> en <a href="https://www.thuisarts.nl/premenstrueel-syndroom/ik-heb-pms-en-ga-daarvoor-pil-slikken">PMS en de pil</a></li>
+<li>De Gynaecoloog (NVOG): <a href="https://www.degynaecoloog.nl/onderwerpen/premenstrueel-syndroom-pms/">Premenstrueel syndroom</a>; <a href="https://www.nvog.nl/wp-content/uploads/2020/06/Richtlijn-Premenstrueel-Syndroom.pdf">Richtlijn PMS</a></li>
+<li>Bull e.a. (2019), ruim 600.000 cycli, <a href="https://www.nature.com/articles/s41746-019-0152-7">npj Digital Medicine</a></li>
+<li>Schleifenbaum e.a. (2021), dagboekstudie 872 vrouwen, <a href="https://www.cambridge.org/core/journals/evolutionary-human-sciences/article/women-feel-more-attractive-before-ovulation-evidence-from-a-largescale-online-diary-study/1E25337DA0BD0AECFA976F7A736AF6B4">Evolutionary Human Sciences</a></li>
+<li>Jappe &amp; Gardner (2009), lichaamsbeeld per cyclusfase, <a href="https://doi.org/10.2466/pms.108.1.74-80">Perceptual and Motor Skills</a></li>
+<li>Roney &amp; Simmons (2013), hormonen en seksueel verlangen, <a href="https://labs.psych.ucsb.edu/roney/james/roneysimmons.published.pdf">Hormones and Behavior</a></li>
+<li>Haselton e.a. (2007), kleding rond de eisprong, <a href="https://pubmed.ncbi.nlm.nih.gov/17045994/">PubMed</a></li>
+<li>Romans e.a. (2012), stemming en de cyclus, <a href="https://www.researchgate.net/publication/233404666_Mood_and_the_Menstrual_Cycle">review van 47 studies</a></li>
+<li>Nolan &amp; Hughes (2022), <a href="https://www.researchgate.net/publication/362201784_Premenstrual_exacerbation_of_mental_health_disorders_a_systematic_review_of_prospective_studies">premenstruele verergering</a></li>
+<li>Cochrane (2024), <a href="https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD001396.pub4/full">SSRI’s bij PMS en PMDD</a></li>
+<li>Skovlund e.a. (2016), <a href="https://jamanetwork.com/journals/jamapsychiatry/fullarticle/2552796">anticonceptie en depressie</a></li>
+<li>Pearce e.a. (2020), <a href="https://research.birmingham.ac.uk/en/publications/exercise-for-premenstrual-syndrome-a-systematic-review-and-meta-a/">beweging bij PMS</a></li>
+<li>Thys-Jacobs e.a. (1998), <a href="https://pubmed.ncbi.nlm.nih.gov/9731851/">calcium en PMS</a></li>
+<li>Reilly e.a. (2024), vóórkomen van PMDD, <a href="https://medicalxpress.com/news/2024-01-prevalence-premenstrual-dysphoric-disorder.html">nieuwsbericht</a></li>
+</ol>
+</section>
+</div>
+</section>
+</main>
+<footer><div class="wrap">Deze app beschrijft gemiddelde patronen bij een natuurlijke cyclus en vervangt geen persoonlijk medisch advies.</div></footer>
+<div id="toast" role="status" hidden><span id="toastT"></span><button type="button" id="toastB" hidden>Ongedaan maken</button></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const DAY=864e5;
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null};
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+const add=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const diff=(a,b)=>Math.round((a-b)/DAY);
+const fmt=(d,o)=>d.toLocaleDateString('nl-NL',o||{day:'numeric',month:'short'});
+const store={get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const PH=[
+{id:'men',k:'Menstruatie',naam:'Menstruatie',kort:'Het baarmoederslijmvlies laat los. Voor veel vrouwen de zwaarste dagen van de maand, al trekt het na een paar dagen meestal snel weg.',
+h:'Oestrogeen en progesteron zijn laag. Omdat ze de hersenen niet meer remmen, stijgt FSH weer en gaan nieuwe eiblaasjes rijpen.',
+l:'Krampen zijn heel gewoon (45 tot 95% van de vrouwen, 2 tot 29% ernstig). Ze komen door prostaglandinen die de baarmoeder laten samentrekken. Ook moeheid, rugpijn en slechter slapen door pijn.',
+s:'Negatieve stemming is vaak het sterkst op de bloedingsdagen zelf. Na de eerste dagen voelen veel vrouwen opluchting.',
+z:'Vaak minder tevreden: opgeblazen, puistjes, ‘niet lekker in je vel’. Hoe groot je je lichaam inschat, verandert in onderzoek níét.',
+tip:'Neem een pijnstiller zoals ibuprofen vroeg, bij de eerste pijn. Een kruik helpt ook. Plan deze dagen wat rustiger.',
+m:[[1,'lager'],[1,'vaak lager'],[1,'minder'],[2,'wisselend'],[1,'soms slechter door pijn'],[1,'krampen, moeheid']]},
+{id:'fol',k:'Folliculair',naam:'Folliculaire fase',kort:'De ‘lichte’ fase: het groeiende eiblaasje maakt steeds meer oestrogeen en veel vrouwen krijgen weer energie.',
+h:'Oestrogeen stijgt sterk; progesteron blijft laag.',
+l:'Meer energie, betere en rustigere slaap, minder vocht vasthouden. De huid is vaak rustiger.',
+s:'Stemming en zelfvertrouwen nemen bij veel vrouwen geleidelijk toe.',
+z:'Minder ontevredenheid over het lichaam dan in de tweede helft van de cyclus.',
+tip:'Een goed moment voor uitdagingen, drukke afspraken of zwaardere trainingen, als jij je nu sterker voelt.',
+m:[[3,'stijgt'],[3,'stijgt'],[3,'verbetert'],[3,'stijgt'],[3,'goed'],[3,'weinig']]},
+{id:'eis',k:'Eisprong',naam:'Eisprong',kort:'Gemiddeld het ‘beste’ moment van de maand: veel vrouwen voelen zich nu positiever, zelfverzekerder en aantrekkelijker.',
+h:'Oestrogeen piekt, gevolgd door een korte, hoge LH-piek; ongeveer 24 tot 36 uur later springt de eicel. Testosteron stijgt licht.',
+l:'Soms korte, eenzijdige pijn in de onderbuik (middenpijn) en meer helder, rekbaar slijm. De eetlust is gemiddeld iets lager.',
+s:'Positiever en zelfverzekerder. Zin in seks piekt halverwege de cyclus, vooral samen met de oestrogeenpiek.',
+z:'Piek in je aantrekkelijk en begeerlijk voelen, zo blijkt uit een dagboekstudie onder 872 vrouwen. Het effect is gemiddeld klein.',
+tip:'Geniet ervan als je het zo ervaart, maar maak je geen zorgen als je er weinig van merkt.',
+m:[[3,'hoog'],[3,'gemiddeld het best'],[3,'piek'],[3,'piek'],[2,'meestal goed'],[2,'soms middenpijn']]},
+{id:'lut',k:'Luteaal',naam:'Luteale fase',kort:'Na de eisprong maakt het gele lichaam progesteron. Voor de meeste vrouwen een rustige, neutrale fase.',
+h:'Progesteron stijgt sterk, oestrogeen geeft een tweede, kleiner piekje. Je lichaamstemperatuur ligt ’s nachts ongeveer 0,3 °C hoger.',
+l:'Meer trek, een iets hoger energieverbruik, en vaak wat onrustiger slapen: minder droomslaap, meer lichte slaap.',
+s:'Meestal stabiel. Progesteron werkt normaal licht kalmerend, maar bij gevoelige vrouwen kunnen de schommelingen juist onrust en prikkelbaarheid geven.',
+z:'Meestal neutraal; aan het eind van deze fase neemt de ontevredenheid bij sommigen toe.',
+tip:'Houd de slaapkamer koel en vaste slaaptijden aan. Meer trek is normaal: je lichaam verbruikt iets meer energie.',
+m:[[2,'gemiddeld'],[2,'meestal stabiel'],[2,'neutraal'],[2,'daalt'],[2,'iets onrustiger'],[2,'meer trek, warmer']]},
+{id:'pre',k:'Premenstrueel',naam:'Premenstruele fase',kort:'Progesteron en oestrogeen dalen snel. Bij een deel van de vrouwen geeft juist die daling klachten.',
+h:'De hormonen dalen. Vrouwen met PMS hebben niet méér of minder hormonen, maar zijn gevoeliger voor de wisselingen (Thuisarts).',
+l:'Gespannen of pijnlijke borsten, opgeblazen buik, vocht vasthouden, hoofdpijn, moeheid, slecht slapen, trek in zoet. Acne verergert vaak.',
+s:'Bij een deel prikkelbaar, huilerig, somber of gespannen; bij PMS of PMDD ernstig. Lang niet bij alle vrouwen.',
+z:'Samen met de menstruatie het moment waarop vrouwen zich het minst mooi voelen.',
+tip:'Neem geen grote beslissingen over je uiterlijk of eetpatroon. Minder zout, cafeïne en alcohol kan helpen.',
+m:[[1,'lager'],[1,'bij een deel lager'],[1,'minder'],[1,'vaak minder'],[1,'vaak slechter'],[1,'borsten, opgeblazen']]}
+];
+const ML=['Energie','Stemming','Je mooi voelen','Zin in seks','Slaap','Lichamelijk'];
+const PK=['Mens','Foll','Eis','Lut','Pre'];
+const A=[
+{g:'Gevoel',l:'Energie',v:[[2,'lager','Bloedverlies, krampen en slechter slapen maken veel vrouwen moe.'],[4,'stijgt','Stijgend oestrogeen en rustigere slaap geven veel vrouwen weer meer energie.'],[5,'hoog','Rond de oestrogeenpiek voelen veel vrouwen zich het fitst.'],[3,'gemiddeld','Meestal stabiel; door wat onrustiger slapen soms iets minder fit.'],[2,'lager','Moeheid is een van de meest genoemde premenstruele klachten.']]},
+{g:'Gevoel',l:'Stemming',v:[[2,'vaak lager','In onderzoek is negatieve stemming vaak het sterkst op de eerste bloedingsdagen zelf; daarna volgt vaak opluchting.'],[4,'stijgt','De stemming neemt bij veel vrouwen geleidelijk toe.'],[5,'gemiddeld het best','In dagboekstudies stijgt positieve stemming rond het midden van de cyclus.'],[3,'meestal stabiel','Voor de meeste vrouwen een neutrale fase.'],[2,'bij een deel lager','Een deel wordt somberder of huileriger. In 38% van 47 studies was er géén verband met de cyclus.']]},
+{g:'Gevoel',l:'Rust en geduld',v:[[2,'soms prikkelbaar','Vooral in de eerste dagen, door pijn en moeheid.'],[4,'meestal rustig','Een fase met weinig spanning voor de meeste vrouwen.'],[4,'meestal rustig','Geen bekende toename van spanning of prikkelbaarheid.'],[3,'wisselend','Progesteron werkt normaal licht kalmerend, maar bij gevoelige vrouwen kunnen de schommelingen juist onrust geven.'],[2,'vaker prikkelbaar','Prikkelbaarheid, spanning en boosheid zijn kernklachten bij PMS en PMDD.']]},
+{g:'Gevoel',l:'Zelfvertrouwen',v:[[3,'wisselend','Hangt sterk samen met hoe je je lichamelijk voelt.'],[4,'neemt toe','Zelfvertrouwen neemt bij veel vrouwen in deze fase toe.'],[5,'hoogst','In de grote dagboekstudie steeg het zelfvertrouwen rond de eisprong, maar minder sterk dan je aantrekkelijk voelen.'],[3,'gemiddeld','Meestal neutraal.'],[3,'wisselend','Kan lager zijn als je je somber, moe of opgeblazen voelt.']]},
+{g:'Zelfbeeld en seks',l:'Je mooi voelen',v:[[2,'minder','Meer ontevreden over je lichaam, terwijl je lichaam in onderzoek niet groter wordt ingeschat.'],[4,'verbetert','Minder ontevredenheid over het lichaam dan in de tweede helft van de cyclus.'],[5,'piek','Vrouwen voelen zich vóór en rond de eisprong aantrekkelijker en begeerlijker (872 vrouwen, 70 dagen). Met de pil blijft dit uit.'],[3,'neutraal','Aan het eind van deze fase neemt de ontevredenheid bij sommigen toe.'],[2,'minder','Opgeblazen gevoel, vocht en puistjes. In een studie bij tienermeisjes was de kans op ontevredenheid ruim 2× zo groot.']]},
+{g:'Zelfbeeld en seks',l:'Zin in seks',v:[[3,'wisselend','Hier is weinig eenduidig onderzoek naar; het verschilt sterk per vrouw.'],[4,'stijgt','Stijgend oestrogeen hangt samen met meer verlangen, met ongeveer twee dagen vertraging.'],[5,'piek','Verlangen piekt halverwege de cyclus: het best onderbouwde effect van allemaal.'],[3,'daalt','Progesteron hangt samen met minder verlangen.'],[2,'vaak minder','Minder zin in seks is een veelgenoemde premenstruele klacht.']]},
+{g:'Lichaam',l:'Slaap',v:[[2,'soms slechter','Pijn en krampen kunnen de nachtrust verstoren.'],[4,'goed','Lagere lichaamstemperatuur ’s nachts en rustigere slaap.'],[4,'meestal goed','Meestal geen opvallende veranderingen.'],[3,'iets onrustiger','Minder droomslaap, meer lichte slaap, hogere hartslag en een warmer lichaam.'],[2,'vaak slechter','Slecht slapen hoort bij de typische premenstruele klachten.']]},
+{g:'Lichaam',l:'Pijn en krampen',v:[[1,'krampen','Bij 45 tot 95% van de vrouwen, 2 tot 29% ernstig. Door prostaglandinen; ibuprofen helpt vaak goed.'],[5,'weinig','Voor de meeste vrouwen een klachtenvrije fase.'],[4,'soms middenpijn','Korte, eenzijdige pijn in de onderbuik rond de eisprong.'],[4,'weinig','Meestal weinig pijn.'],[2,'hoofdpijn, borsten','Hoofdpijn, spierpijn en gespannen of pijnlijke borsten.']]},
+{g:'Lichaam',l:'Buik en vocht',v:[[2,'opgeblazen','De eerste dagen voelen veel vrouwen zich nog opgeblazen.'],[5,'weinig vocht','Minder vocht vasthouden.'],[4,'meestal rustig','Meestal geen opvallende veranderingen.'],[3,'neutraal','Bij sommigen begint het vocht vasthouden aan het eind van deze fase.'],[2,'vocht vasthouden','Opgeblazen buik en vocht vasthouden; minder zout kan helpen.']]},
+{g:'Lichaam',l:'Huid',v:[[3,'soms puistjes','Opvlammingen van vlak vóór de menstruatie trekken langzaam weg.'],[4,'vaak rustiger','De huid is in deze fase vaak rustiger.'],[4,'meestal rustig','Meestal geen opvallende veranderingen.'],[3,'neutraal','Meestal geen opvallende veranderingen.'],[2,'vaker puistjes','44% van 400 vrouwen meldde een acne-opvlamming vóór de menstruatie, vaker boven de 33.']]},
+{g:'Ter informatie: niet goed of slecht',l:'Eetlust en trek',v:[[null,'wisselend','Verschilt per vrouw.'],[null,'gemiddeld','Geen opvallende veranderingen.'],[null,'iets minder','Oestrogeen hangt samen met iets minder eten.'],[null,'meer trek','Je lichaam verbruikt ongeveer 7% meer energie; meer trek is normaal.'],[null,'trek in zoet','Eetbuien of trek in zoet komen vaak voor.']]},
+{g:'Ter informatie: niet goed of slecht',l:'Lichaamstemperatuur',v:[[null,'laag','Na de daling van progesteron zakt de temperatuur.'],[null,'laag','Lager dan in de tweede helft van de cyclus.'],[null,'stijgt na de eisprong','Progesteron laat de temperatuur na de eisprong oplopen.'],[null,'± 0,3 °C hoger','’s Nachts gemiddeld ongeveer 0,3 °C warmer dan in de eerste helft.'],[null,'nog verhoogd','Blijft hoger tot de menstruatie begint.']]}
+];
+function aspects(i){let g='',h=`<div><h4 style="color:var(--c);font-size:17px">Hoe voel je je gemiddeld in deze fase?</h4><p class="ax" style="margin:2px 0 4px">De vijf balkjes zijn de vijf fasen van de maand: hoger is prettiger, de fase van nu is omlijnd. Het gaat om gemiddelden met kleine verschillen; bij jou kan het anders zijn.</p><div class="asp">`;
+for(const a of A){if(a.g!==g){g=a.g;h+=`<div class="ag">${g}</div>`}const v=a.v[i],lv=v[0];
+h+=`<div class="ar${lv==null?' info':''}"><div class="ah"><b>${a.l}</b><span>${v[1]}</span></div>${lv==null?'':`<div class="spark" role="img" aria-label="${a.l} per fase: ${a.v.map((q,j)=>PK[j]+' '+q[1]).join(', ')}">${a.v.map((q,j)=>`<div class="${j===i?'on':''}" style="--pc:var(--${PH[j].id})"><i><b style="height:${q[0]*20}%"></b></i><small>${PK[j]}</small></div>`).join('')}</div>`}<p class="ax">${v[2]}</p></div>`}
+return h+'</div></div>'}
+const WK=[['men','Week 1 · dag 1–7','De menstruatie begint. Krampen, moeheid en je opgeblazen of minder mooi voelen; de stemming kan wat lager zijn. Na een paar dagen trekt dat meestal weg.'],
+['fol','Week 2 · dag 8–14','Oestrogeen stijgt. Meer energie, goede slaap, meer zelfvertrouwen. Rond de eisprong voelen veel vrouwen zich het aantrekkelijkst en hebben ze meer zin in seks.'],
+['lut','Week 3 · dag 15–21','Progesteron neemt het over. Iets warmer, meer trek, wat onrustiger slapen. Voor de meeste vrouwen een stabiele, neutrale week.'],
+['pre','Week 4 · dag 22–28','De hormonen dalen. Gevoelige borsten, opgeblazen buik, onrustiger huid. Een deel wordt prikkelbaarder of somberder en voelt zich minder mooi; meestal mild.']];
+const G=[{k:'bl',l:'Bloedverlies',a:0,b:3,lo:'0 geen',hi:'3 veel',d:0},{k:'pijn',l:'Pijn',a:0,b:3,lo:'0 geen',hi:'3 veel',d:0},{k:'st',l:'Stemming',a:1,b:5,lo:'1 slecht',hi:'5 goed',d:3},{k:'en',l:'Energie',a:1,b:5,lo:'1 laag',hi:'5 hoog',d:3},{k:'sl',l:'Slaap',a:1,b:5,lo:'1 slecht',hi:'5 goed',d:3},{k:'zb',l:'Zelfbeeld',a:1,b:5,lo:'1 minder mooi',hi:'5 mooi',d:3}];
+
+let S=store.get('mc.set',null);
+const fresh=!S;
+if(!S||!parse(S.start))S={start:iso(add(today(),-9)),L:28,duur:5};
+S.L=Math.min(40,Math.max(21,+S.L||28));S.duur=Math.min(8,Math.max(2,+S.duur||5));
+let LOG=store.get('mc.log',[]);if(!Array.isArray(LOG))LOG=[];
+let exOn=!store.get('mc.noex',false)&&LOG.length===0;
+let sel=1,sampleDate=fresh;
+
+const ov=()=>S.L-14;
+function phaseIdx(d){if(d<=S.duur)return 0;if(Math.abs(d-ov())<=1)return 2;if(d<ov())return 1;if(d>S.L-6)return 4;return 3}
+function ranges(){const r=[];for(let d=1;d<=S.L;d++){const i=phaseIdx(d);const last=r[r.length-1];if(last&&last.i===i)last.b=d;else r.push({i,a:d,b:d})}return r}
+const cday=date=>{const n=diff(date,parse(S.start));return n>=0?(n%S.L)+1:((n%S.L)+S.L)%S.L+1};
+const g=(x,m,s,h)=>h*Math.exp(-0.5*(((x-m)/s)**2));
+function H(d){const o=ov();return{e2:.12+g(d,o-1,2.2,.88)+g(d,o+7,3,.42),p4:.04+g(d,o+7.5,3.2,.82),lh:.08+g(d,o,.55,.95),fsh:.10+g(d,.46*o,3,.2)+g(d,o,.6,.3)+g(d,S.L+1.5,2,.12)}}
+const word=v=>v<.3?'laag':v<.6?'gemiddeld':'hoog';
+const cv=i=>`--c:var(--${PH[i].id});--t:var(--${PH[i].id}-t)`;
+const rel=n=>n===0?'vandaag':n===1?'morgen':n>1?`over ${n} dagen`:n===-1?'gisteren':`${-n} dagen geleden`;
+
+function card(i,d,extra){const p=PH[i];const rg=ranges().filter(r=>r.i===i);const span=rg.map(r=>r.a===r.b?`dag ${r.a}`:`dag ${r.a}–${r.b}`).join(', ');
+return `<article class="pcard" style="${cv(i)}"><header><div><h3>${p.naam}</h3><p>${span}${extra||''}</p></div>${d?`<span class="badge">dag ${d}</span>`:''}</header><div class="pbody"><p class="kort">${p.kort}</p><div class="pgrid">${[['Hormonen',p.h],['Lichaam',p.l],['Stemming',p.s],['Zelfbeeld',p.z]].map(x=>`<div><h4>${x[0]}</h4><p>${x[1]}</p></div>`).join('')}</div>${aspects(i)}<div class="tip"><b>Tip</b> · ${p.tip}</div></div></article>`}
+
+function ring(){const c=150,R=118,L=S.L,st=parse(S.start),t=today(),d=diff(t,st)+1;
+const pt=(a,r)=>{const q=a*Math.PI/180;return[(c+r*Math.sin(q)).toFixed(2),(c-r*Math.cos(q)).toFixed(2)]};
+const arc=(a0,a1,r)=>{const p0=pt(a0,r),p1=pt(a1,r);return `M${p0[0]} ${p0[1]}A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${p1[0]} ${p1[1]}`};
+let h='';
+for(const r of ranges()){h+=`<path d="${arc((r.a-1)/L*360+.9,r.b/L*360-.9,R)}" fill="none" stroke="var(--${PH[r.i].id})" stroke-width="30"/>`}
+for(let k=1;k<=L;k++){const p=pt((k-.5)/L*360,90);h+=`<circle cx="${p[0]}" cy="${p[1]}" r="${k===d?0:2}" fill="var(--line)"/>`}
+const ok=d>=1;const dd=Math.min(Math.max(d,1),L);const i=phaseIdx(d>L?L:dd);
+if(ok){const a=(dd-.5)/L*360;const m=pt(a,R),n=pt(a,90);h+=`<circle cx="${n[0]}" cy="${n[1]}" r="5" fill="var(--${PH[i].id})"/><circle id="mark" cx="${m[0]}" cy="${m[1]}" r="12" fill="var(--bg)" stroke="var(--ink)" stroke-width="4"/>`}
+h+=ok?`<text x="${c}" y="112" text-anchor="middle" font-size="14" fill="var(--mut)">${d>L?'over tijd · dag':'dag'}</text><text x="${c}" y="168" text-anchor="middle" font-size="60" font-weight="600" fill="var(--ink)">${d}</text><text x="${c}" y="190" text-anchor="middle" font-size="13" fill="var(--mut)">van ± ${L} dagen</text><text x="${c}" y="214" text-anchor="middle" font-size="16" font-weight="600" fill="var(--${PH[i].id})">${PH[i].k}</text>`
+:`<text x="${c}" y="146" text-anchor="middle" font-size="15" fill="var(--mut)">Kies een datum</text><text x="${c}" y="168" text-anchor="middle" font-size="15" fill="var(--mut)">in het verleden</text>`;
+$('#ring').innerHTML=h;
+$('#ringLeg').innerHTML=ranges().map(r=>`<span style="${cv(r.i)}"><i></i>${PH[r.i].k} <span class="muted">${fmt(add(st,r.a-1))}${r.a!==r.b?' – '+fmt(add(st,r.b-1)):''}</span></span>`).join('');
+// status
+let s='';
+if(!ok){s=`<div class="alert">De gekozen datum ligt in de toekomst. Kies de eerste dag van je laatste menstruatie.</div>`}
+else if(d>L){const due=add(st,L);s=`<div class="alert">Volgens je instellingen werd je menstruatie rond <b>${fmt(due,{weekday:'long',day:'numeric',month:'long'})}</b> verwacht (${rel(diff(due,t))}). Begonnen? Tik op ‘Mijn menstruatie is vandaag begonnen’ of pas de datum aan. Blijft je menstruatie uit en kun je zwanger zijn, doe dan een zwangerschapstest.</div>`}
+const o=ov();const rows=[];
+if(ok&&d<=L){if(d<o-1)rows.push([2,'Eisprong (geschat)',`${fmt(add(st,o-2))} – ${fmt(add(st,o))}`,rel(o-1-d)]);else if(d<=o+1)rows.push([2,'Eisprong (geschat)','nu ongeveer','deze dagen']);
+if(d<S.L-5)rows.push([4,'Premenstruele dagen vanaf',fmt(add(st,S.L-6)),rel(S.L-5-d)]);
+rows.push([0,'Volgende menstruatie rond',fmt(add(st,S.L),{weekday:'short',day:'numeric',month:'short'}),rel(S.L+1-d)])}
+s+=rows.length?`<ul class="up">${rows.map(r=>`<li style="${cv(r[0])}"><i></i><span><b>${r[1]}</b><br><span class="muted small">${r[2]}</span></span><em>${r[3]}</em></li>`).join('')}</ul>`:'';
+$('#status').innerHTML=s;
+$('#todayCard').innerHTML=ok?card(i,d,` · vandaag ${fmt(t,{weekday:'long',day:'numeric',month:'long'})}`):'';
+$('#sampleNote').hidden=!sampleDate;
+$('#start').value=S.start;$('#lOut').textContent=`${S.L} dagen`;$('#dOut').textContent=`${S.duur} dagen`;
+}
+
+function explore(){const L=S.L;sel=Math.min(Math.max(sel,1),L);const r=$('#exRange');r.max=L;r.value=sel;
+const i=phaseIdx(sel);$('#exDay').innerHTML=`dag ${sel} <small>van ${L}</small>`;
+const v=H(sel);$('#hread').innerHTML=[['Oestrogeen','e2'],['Progesteron','p4'],['LH','lh'],['FSH','fsh']].map(x=>`<div class="mr" style="--c:var(--${x[1]})"><span>${x[0]}</span><div class="track"><span style="width:${Math.min(100,v[x[1]]*96)}%"></span></div><span class="muted">${word(v[x[1]])}</span></div>`).join('');
+$('#exCard').innerHTML=card(i,sel);drawH()}
+
+function drawH(){const s=$('#hsvg'),W=s.clientWidth,Hh=s.clientHeight;if(!W||!Hh)return;const L=S.L,sm=W<520,m={l:8,r:8,t:28,b:26};
+const x=d=>m.l+(d-.5)/L*(W-m.l-m.r),y=v=>m.t+(1-v/1.12)*(Hh-m.t-m.b);let h='';
+for(const r of ranges()){const x0=x(r.a-.5),x1=x(r.b+.5),nm=sm?['Mens.','Foll.','Eispr.','Lut.','Prem.'][r.i]:PH[r.i].k;
+h+=`<rect x="${x0}" y="${m.t-22}" width="${x1-x0}" height="${Hh-m.t-m.b+22}" fill="var(--${PH[r.i].id}-t)"/>`;if(x1-x0>nm.length*7.4+6)h+=`<text x="${(x0+x1)/2}" y="${m.t-8}" text-anchor="middle" font-size="13" font-weight="600" fill="var(--${PH[r.i].id})">${nm}</text>`}
+const ks=['e2','p4','lh','fsh'];const pts={e2:'',p4:'',lh:'',fsh:''};
+for(let k=0;k<=240;k++){const d=.5+k/240*L,v=H(d);for(const q of ks)pts[q]+=(k?'L':'M')+x(d).toFixed(1)+' '+y(v[q]).toFixed(1)}
+h+=ks.map(q=>`<path d="${pts[q]}" fill="none" stroke="var(--${q})" stroke-width="${q==='fsh'?2:2.5}" ${q==='fsh'?'stroke-dasharray="6 4"':''} stroke-linejoin="round"/>`).join('');
+const o=ov(),xs=x(sel),v=H(sel);
+h+=`<line x1="${xs}" x2="${xs}" y1="${m.t-22}" y2="${Hh-m.b}" stroke="var(--ink)" stroke-width="1.5"/>`+ks.map(q=>`<circle cx="${xs}" cy="${y(v[q])}" r="5" fill="var(--${q})" stroke="var(--bg)" stroke-width="2"/>`).join('');
+const lab=(t,xx,yy,a,c)=>`<text x="${xx}" y="${yy}" text-anchor="${a}" font-size="13" fill="var(--${c})">${t}</text>`;
+h+=lab('oestrogeen',x(o-3.4),y(H(o-3).e2),'end','e2')+lab('LH',x(o+.7),y(.98),'start','lh')+lab('progesteron',x(o+7.5),y(.9)-6,'middle','p4')+lab('FSH',x(.46*o),y(.32)-6,'middle','fsh');
+const tk=sm?[1,o,L]:[1,7,o,21,L].filter((t,ix,arr)=>t<=L&&arr.indexOf(t)===ix);h+=tk.map(t=>`<text x="${x(t)}" y="${Hh-6}" text-anchor="middle" font-size="13" fill="var(--mut)">${t}</text>`).join('');
+s.innerHTML=h}
+const roH=new ResizeObserver(()=>drawH());roH.observe($('#hsvg'));
+const setFromX=e=>{const s=$('#hsvg'),b=s.getBoundingClientRect();const f=(e.clientX-b.left-8)/(b.width-16);sel=Math.min(S.L,Math.max(1,Math.round(f*S.L+.5)));explore()};
+let drag=false;$('#hsvg').addEventListener('pointerdown',e=>{drag=true;setFromX(e)});addEventListener('pointerup',()=>drag=false);$('#hsvg').addEventListener('pointermove',e=>{if(drag)setFromX(e)});
+$('#exRange').addEventListener('input',e=>{sel=+e.target.value;explore()});
+$('#exPrev').addEventListener('click',()=>{sel=sel>1?sel-1:S.L;explore()});
+$('#exNext').addEventListener('click',()=>{sel=sel<S.L?sel+1:1;explore()});
+
+$('#weeks').innerHTML=WK.map(w=>{const i=PH.findIndex(p=>p.id===w[0]);return `<div style="${cv(i)}"><h4>${w[1]}</h4><p>${w[2]}</p></div>`}).join('');
+$('#ovTable').innerHTML=`<thead><tr><th>Fase</th><th>Hormonen</th><th>Lichaam</th><th>Stemming</th><th>Zelfbeeld</th></tr></thead><tbody>${PH.map((p,i)=>`<tr style="${cv(i)}"><td class="ph">${p.naam}</td><td data-l="Hormonen">${p.h}</td><td data-l="Lichaam">${p.l}</td><td data-l="Stemming">${p.s}</td><td data-l="Zelfbeeld">${p.z}</td></tr>`).join('')}</tbody>`;
+
+// ---- dagboek ----
+function examples(){const t=today(),out=[];let seed=7;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+const base=[[3,2,3,2],[4,4,4,4],[4,4,4,5],[3,3,3,3],[2,2,2,2]];const notes={1:'Krampen, ibuprofen genomen',2:'Moe, vroeg naar bed',9:'Lekker gesport',13:'Veel energie',21:'Druk op werk',24:'Opgeblazen gevoel',26:'Prikkelbaar'};
+for(let k=0;k<24;k++){const dt=add(t,-k),cd=cday(dt),i=phaseIdx(cd),b=base[i],j=()=>Math.round(rnd()*1.4-.7),cl=(v,a,z)=>Math.min(z,Math.max(a,v));
+out.push({d:iso(dt),bl:cd<=S.duur?Math.max(0,3-Math.floor(cd/2)):0,pijn:cd<=2?2:cd<=S.duur?1:0,st:cl(b[0]+j(),1,5),en:cl(b[1]+j(),1,5),sl:cl(b[2]+j(),1,5),zb:cl(b[3]+j(),1,5),n:notes[cd]||'',ex:1})}return out}
+const entries=()=>exOn&&LOG.length===0?examples():LOG.slice().sort((a,b)=>a.d<b.d?1:-1);
+$('#groups').innerHTML=G.map(q=>`<fieldset><legend>${q.l}<em>${q.lo} · ${q.hi}</em></legend><div class="seg">${Array.from({length:q.b-q.a+1},(_,n)=>q.a+n).map(v=>`<label><input type="radio" name="${q.k}" id="${q.k}${v}" value="${v}"><span>${v}</span></label>`).join('')}</div></fieldset>`).join('');
+function fillForm(e){$('#lDate').value=e?e.d:iso(today());G.forEach(q=>{const v=e?e[q.k]:q.d;const r=document.getElementById(q.k+v);if(r)r.checked=true});$('#lNote').value=e?e.n||'':'';cdLine()}
+function cdLine(){const dt=parse($('#lDate').value);if(!dt){$('#lCd').textContent='';return}const cd=cday(dt),i=phaseIdx(cd);const ex=LOG.find(x=>x.d===$('#lDate').value);
+$('#lCd').innerHTML=`<span style="color:var(--${PH[i].id});font-weight:600">Cyclusdag ${cd} · ${PH[i].naam}</span>${ex?' <span class="muted">· deze dag is al ingevuld en wordt bijgewerkt</span>':''}`}
+$('#lDate').addEventListener('change',()=>{const e=LOG.find(x=>x.d===$('#lDate').value);e?fillForm(e):cdLine()});
+$('#lReset').addEventListener('click',()=>fillForm(null));
+$('#logForm').addEventListener('submit',ev=>{ev.preventDefault();const d=$('#lDate').value;if(!parse(d)){toast('Kies eerst een datum');return}
+const e={d,n:$('#lNote').value.trim()};G.forEach(q=>{const r=document.querySelector(`input[name=${q.k}]:checked`);e[q.k]=r?+r.value:q.d});
+const ix=LOG.findIndex(x=>x.d===d);if(ix>=0)LOG[ix]=e;else LOG.push(e);exOn=false;const ok=store.set('mc.log',LOG);
+toast(ok?(ix>=0?'Dag bijgewerkt':'Dag opgeslagen'):'Opslaan lukt niet in deze browser; je gegevens verdwijnen bij sluiten');renderLog();cdLine()});
+function renderLog(){const E=entries();const isEx=E.length&&E[0].ex;
+$('#exNote').innerHTML=isEx?'Hieronder staan <b>voorbeeldgegevens</b>. Ze verdwijnen zodra je je eerste eigen dag opslaat.':'';
+$('#entries').innerHTML=E.length?E.map(e=>{const cd=cday(parse(e.d)),i=phaseIdx(cd);return `<li style="${cv(i)}"><i></i><div><b>${fmt(parse(e.d),{weekday:'short',day:'numeric',month:'short'})}</b> <span class="muted small">· dag ${cd}</span>${e.ex?'<span class="tag">voorbeeld</span>':''}<div class="vals">Stemming ${e.st} · Energie ${e.en} · Slaap ${e.sl} · Zelfbeeld ${e.zb} · Pijn ${e.pijn} · Bloed ${e.bl}</div>${e.n?`<div class="small">${e.n.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</div>`:''}</div><div class="acts">${e.ex?'':`<button type="button" data-ed="${e.d}">Wijzig</button><button type="button" data-del="${e.d}" aria-label="Verwijder">✕</button>`}</div></li>`}).join(''):'<li style="grid-template-columns:1fr" class="muted">Nog niets ingevuld. Begin vandaag met de eerste dag.</li>';
+drawP()}
+$('#entries').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+if(b.dataset.ed){fillForm(LOG.find(x=>x.d===b.dataset.ed));$('#logForm').scrollIntoView({behavior:reduce?'auto':'smooth'})}
+if(b.dataset.del){const ix=LOG.findIndex(x=>x.d===b.dataset.del);if(ix<0)return;const [gone]=LOG.splice(ix,1);store.set('mc.log',LOG);renderLog();toast('Dag verwijderd',()=>{LOG.push(gone);store.set('mc.log',LOG);renderLog()})}});
+function drawP(){const s=$('#psvg'),W=s.clientWidth,Hh=s.clientHeight;if(!W||!Hh)return;const L=S.L,m={l:26,r:10,t:10,b:26},E=entries();
+const x=d=>m.l+(d-.5)/L*(W-m.l-m.r),y=v=>m.t+(5-v)/4*(Hh-m.t-m.b);let h='';
+for(const r of ranges())h+=`<rect x="${x(r.a-.5)}" y="${m.t-6}" width="${x(r.b+.5)-x(r.a-.5)}" height="${Hh-m.t-m.b+12}" fill="var(--${PH[r.i].id}-t)"/>`;
+for(let v=1;v<=5;v++)h+=`<text x="${m.l-8}" y="${y(v)+4}" text-anchor="end" font-size="13" fill="var(--mut)">${v}</text>`;
+h+=E.map(e=>{const cd=cday(parse(e.d));return `<circle cx="${x(cd)-3}" cy="${y(e.st)}" r="4.5" fill="var(--lut)" fill-opacity=".85"/><circle cx="${x(cd)+3}" cy="${y(e.zb)}" r="4.5" fill="var(--men)" fill-opacity=".85"/>`}).join('');
+h+=[1,ov(),L].map((t,ix)=>`<text x="${x(t)}" y="${Hh-6}" text-anchor="${['start','middle','end'][ix]}" font-size="13" fill="var(--mut)">dag ${t}</text>`).join('');
+if(!E.length)h+=`<text x="${W/2}" y="${Hh/2}" text-anchor="middle" font-size="14" fill="var(--mut)">Je patroon verschijnt hier</text>`;s.innerHTML=h}
+const roP=new ResizeObserver(()=>drawP());roP.observe($('#psvg'));
+$('#copyLog').addEventListener('click',()=>{const rows=LOG.slice().sort((a,b)=>a.d<b.d?-1:1).map(e=>[e.d,cday(parse(e.d)),e.bl,e.pijn,e.st,e.en,e.sl,e.zb,(e.n||'').replace(/[;\n]/g,' ')].join(';'));
+const txt=['datum;cyclusdag;bloedverlies;pijn;stemming;energie;slaap;zelfbeeld;notitie',...rows].join('\n');const box=$('#copyBox');
+if(!LOG.length){toast('Er is nog niets om te kopiëren');return}
+const show=()=>{box.hidden=false;box.value=txt;box.select();toast('Selecteer en kopieer de tekst hieronder')};
+try{navigator.clipboard.writeText(txt).then(()=>toast('Dagboek gekopieerd'),show)}catch(e){show()}});
+let wipeArm=false;$('#wipe').addEventListener('click',e=>{if(!wipeArm){wipeArm=true;e.target.textContent='Zeker weten? Tik nogmaals';setTimeout(()=>{wipeArm=false;e.target.textContent='Alles wissen'},4000);return}
+const old=LOG.slice();LOG=[];store.set('mc.log',LOG);store.set('mc.noex',true);exOn=false;wipeArm=false;e.target.textContent='Alles wissen';renderLog();toast('Dagboek gewist',()=>{LOG=old;store.set('mc.log',LOG);renderLog()})});
+
+// ---- toast ----
+let tT;function toast(t,undo){const el=$('#toast');$('#toastT').textContent=t;const b=$('#toastB');b.hidden=!undo;b.onclick=()=>{undo&&undo();el.hidden=true};el.hidden=false;clearTimeout(tT);tT=setTimeout(()=>el.hidden=true,undo?6000:2800)}
+
+// ---- instellingen ----
+function save(){sampleDate=false;store.set('mc.set',S);all()}
+$('#start').addEventListener('change',e=>{if(parse(e.target.value)){S.start=e.target.value;save()}});
+$('#lMin').addEventListener('click',()=>{if(S.L>21){S.L--;save()}});$('#lPlus').addEventListener('click',()=>{if(S.L<40){S.L++;save()}});
+$('#dMin').addEventListener('click',()=>{if(S.duur>2){S.duur--;save()}});$('#dPlus').addEventListener('click',()=>{if(S.duur<8){S.duur++;save()}});
+$('#nowStart').addEventListener('click',()=>{const old=S.start;S.start=iso(today());save();toast('Dag 1 is nu vandaag',()=>{S.start=old;save()})});
+
+// ---- weten ----
+$('#subnav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)document.getElementById(b.dataset.go).scrollIntoView({behavior:reduce?'auto':'smooth'})});
+
+// ---- routing ----
+const VIEWS=['vandaag','verkennen','dagboek','weten'];
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'vandaag';
+VIEWS.forEach(n=>{document.getElementById('v-'+n).hidden=n!==v});
+document.querySelectorAll('nav.tabs a').forEach(a=>{if(a.dataset.v===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+if(v==='verkennen')drawH();if(v==='dagboek')drawP()}
+addEventListener('hashchange',()=>{route();scrollTo(0,0)});
+
+function all(){const d=diff(today(),parse(S.start))+1;if(d>=1&&d<=S.L)sel=d;ring();explore();cdLine();renderLog()}
+fillForm(null);all();route();
+}
+</script>
+</body>
+</html>
