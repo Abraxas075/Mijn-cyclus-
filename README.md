@@ -1,12 +1,14 @@
 # Mijn cyclus
 
-Een app die laat zien hoe lichaam, stemming en zelfbeeld door de menstruatiecyclus heen kunnen veranderen. De inhoud is gebaseerd op wetenschappelijk onderzoek en Nederlandse medische informatie (Thuisarts, De Gynaecoloog/NVOG).
+Een app met illustraties gemaakt met Higgsfield die laat zien hoe lichaam, stemming en zelfbeeld door de menstruatiecyclus heen kunnen veranderen. De inhoud is gebaseerd op wetenschappelijk onderzoek en Nederlandse medische informatie (Thuisarts, De Gynaecoloog/NVOG).
 
 ## Onderdelen
 
 - **Vandaag**: vul de eerste dag van je laatste menstruatie, je cycluslengte en de duur van je menstruatie in. Je ziet dan op welke cyclusdag en in welke fase je zit, wat er in die fase gemiddeld gebeurt en wanneer de eisprong, de premenstruele dagen en je volgende menstruatie ongeveer komen.
 - **Verkennen**: schuif door de dagen van de cyclus, met een schematische grafiek van de hormonen (oestrogeen, progesteron, LH, FSH) en per fase een uitgebreide tabel met energie, stemming, zelfbeeld, slaap, pijn en meer.
 - **Dagboek**: houd per dag bloedverlies, pijn, stemming, energie, slaap en zelfbeeld bij, met een grafiek van je eigen patroon en een knop om alles als tekst te kopiëren.
+- **Mijn cycli**: elke startdag van je menstruatie wordt opgeslagen (met de knop op ‘Vandaag’ of automatisch als je in je dagboek bloedverlies invult). De app berekent je gemiddelde cycluslengte, de kortste en langste cyclus, hoe regelmatig je bent en hoe lang je menstruatie duurt, en vergelijkt dat met de normale waarden van FIGO.
+- **Mijn gemiddelden per fase**: uit je dagboek zie je hoe jij je gemiddeld voelt per fase, naast het gemiddelde uit onderzoek.
 - **Weten**: achtergrond over je mooi of minder mooi voelen, stemming, PMS, PMDD en premenstruele verergering, tips, wanneer je naar de huisarts gaat, en de bronnen.
 
 ## Gebruiken
